@@ -1,6 +1,7 @@
 import Pen from './lib/pen';
 import Downloader from './lib/downloader';
 
+import { getGlobal }  from '../../utils/global';
 const util = require('./lib/util');
 
 const downloader = new Downloader();
@@ -601,17 +602,17 @@ Component({
     },
 
     initScreenK() {
-      if (!(getApp() && getApp().systemInfo && getApp().systemInfo.screenWidth)) {
+      if (!(getGlobal() && getGlobal().systemInfo && getGlobal().systemInfo.screenWidth)) {
         try {
-          getApp().systemInfo = wx.getSystemInfoSync();
+          getGlobal().systemInfo = wx.getSystemInfoSync();
         } catch (e) {
           console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
           return;
         }
       }
       this.screenK = 0.5;
-      if (getApp() && getApp().systemInfo && getApp().systemInfo.screenWidth) {
-        this.screenK = getApp().systemInfo.screenWidth / 750;
+      if (getGlobal() && getGlobal().systemInfo && getGlobal().systemInfo.screenWidth) {
+        this.screenK = getGlobal().systemInfo.screenWidth / 750;
       }
       setStringPrototype(this.screenK, this.properties.scaleRatio);
     },
