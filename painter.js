@@ -1,7 +1,6 @@
 import Pen from './lib/pen';
 import Downloader from './lib/downloader';
 
-import { getGlobal }  from '../../utils/global';
 const util = require('./lib/util');
 
 const downloader = new Downloader();
@@ -29,6 +28,12 @@ Component({
     // 运行自定义选择框和删除缩放按钮
     customActionStyle: {
       type: Object,
+    },
+    systemInfo: {
+      type: Object,
+      observer: function (systemInfo) {
+        this.systemInfo = systemInfo;
+      }
     },
     palette: {
       type: Object,
@@ -304,7 +309,7 @@ Component({
         height: this.currentPalette.height,
         views: this.isEmpty(doView) ? [] : [doView]
       }
-      const pen = new Pen(this.globalContext, draw);
+      const pen = new Pen(this.globalContext, draw, this.systemInfo);
 
       if (isMoving && doView.type === 'text') {
         pen.paint((callbackInfo) => {
@@ -343,7 +348,7 @@ Component({
       if (css && css.deletable) {
         this.block.views.push(this.getDeleteIcon(rect))
       }
-      const topBlock = new Pen(this.frontContext, this.block)
+      const topBlock = new Pen(this.frontContext, this.block, this.systemInfo)
       topBlock.paint();
     },
 
@@ -466,17 +471,17 @@ Component({
         views: topLayers
       }
       if (this.prevFindedIndex < this.findedIndex) {
-        new Pen(this.bottomContext, bottomDraw).paint();
+        new Pen(this.bottomContext, bottomDraw, this.systemInfo).paint();
         this.doAction(null, (callbackInfo) => {
           this.movingCache = callbackInfo
         })
-        new Pen(this.topContext, topDraw).paint();
+        new Pen(this.topContext, topDraw, this.systemInfo).paint();
       } else {
-        new Pen(this.topContext, topDraw).paint();
+        new Pen(this.topContext, topDraw, this.systemInfo).paint();
         this.doAction(null, (callbackInfo) => {
           this.movingCache = callbackInfo
         })
-        new Pen(this.bottomContext, bottomDraw).paint();
+        new Pen(this.bottomContext, bottomDraw, this.systemInfo).paint();
       }
       this.prevFindedIndex = this.findedIndex
     },
@@ -602,17 +607,17 @@ Component({
     },
 
     initScreenK() {
-      if (!(getGlobal() && getGlobal().systemInfo && getGlobal().systemInfo.screenWidth)) {
+      if (!(this.systemInfo && this.systemInfo.screenWidth)) {
         try {
-          getGlobal().systemInfo = wx.getSystemInfoSync();
+          this.systemInfo = wx.getSystemInfoSync();
         } catch (e) {
           console.error(`Painter get system info failed, ${JSON.stringify(e)}`);
           return;
         }
       }
       this.screenK = 0.5;
-      if (getGlobal() && getGlobal().systemInfo && getGlobal().systemInfo.screenWidth) {
-        this.screenK = getGlobal().systemInfo.screenWidth / 750;
+      if (this.systemInfo && this.systemInfo.screenWidth) {
+        this.screenK = this.systemInfo.screenWidth / 750;
       }
       setStringPrototype(this.screenK, this.properties.scaleRatio);
     },
@@ -638,7 +643,7 @@ Component({
         this.bottomContext || (this.bottomContext = wx.createCanvasContext('bottom', this));
         this.topContext || (this.topContext = wx.createCanvasContext('top', this));
         this.globalContext || (this.globalContext = wx.createCanvasContext('k-canvas', this));
-        new Pen(this.bottomContext, palette).paint(() => {
+        new Pen(this.bottomContext, palette, this.systemInfo).paint(() => {
           this.isDisabled = false;
           this.isDisabled = this.outterDisabled;
           this.triggerEvent('didShow');
@@ -677,7 +682,7 @@ Component({
         });
         this.photoContext || (this.photoContext = wx.createCanvasContext('photo', this));
 
-        new Pen(this.photoContext, palette).paint(() => {
+        new Pen(this.photoContext, palette, this.systemInfo).paint(() => {
           this.saveImgToLocal();
         });
         setStringPrototype(this.screenK, this.properties.scaleRatio);
