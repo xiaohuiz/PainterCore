@@ -76,7 +76,7 @@ Component({
           that.triggerEvent('imgErr', {
             error: error
           });
-          console.error(error);
+  // console.error(error);
           return;
         }
       }
@@ -90,7 +90,7 @@ Component({
         } = palette;
         
         if (!width || !height) {
-          console.error(`You should set width and height correctly for painter, width: ${width}, height: ${height}`);
+  // console.error(`You should set width and height correctly for painter, width: ${width}, height: ${height}`);
           return;
         }
         this.canvasWidthInPx = width.toPx();
@@ -149,7 +149,7 @@ Component({
                   fail: (error) => {
                     // 如果图片坏了，则直接置空，防止坑爹的 canvas 画崩溃了
                     view.url = "";
-                    console.error(`getImageInfo ${view.url} failed, ${JSON.stringify(error)}`);
+  // console.error(`getImageInfo ${view.url} failed, ${JSON.stringify(error)}`);
                   },
                   complete: () => {
                     completeCount++;
@@ -182,7 +182,7 @@ Component({
             that.getImageInfo(res.tempFilePath);
           },
           fail: function (error) {
-            console.error(`canvasToTempFilePath failed, ${JSON.stringify(error)}`);
+  // console.error(`canvasToTempFilePath failed, ${JSON.stringify(error)}`);
             that.triggerEvent('imgErr', {
               error: error
             });
@@ -198,7 +198,7 @@ Component({
         success: (infoRes) => {
           if (that.paintCount > MAX_PAINT_COUNT) {
             const error = `The result is always fault, even we tried ${MAX_PAINT_COUNT} times`;
-            console.error(error);
+  // console.error(error);
             that.triggerEvent('imgErr', {
               error: error
             });
@@ -215,7 +215,7 @@ Component({
           that.paintCount++;
         },
         fail: (error) => {
-          console.error(`getImageInfo failed, ${JSON.stringify(error)}`);
+  // console.error(`getImageInfo failed, ${JSON.stringify(error)}`);
           that.triggerEvent('imgErr', {
             error: error
           });
@@ -241,7 +241,7 @@ function setStringPrototype(screenK, scale) {
     }
     const results = reg.exec(this);
     if (!this || !results) {
-      console.error(`The size: ${this} is illegal`);
+  // console.error(`The size: ${this} is illegal`);
       return 0;
     }
     const unit = results[2];
